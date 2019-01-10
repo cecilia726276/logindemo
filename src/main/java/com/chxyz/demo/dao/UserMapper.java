@@ -7,7 +7,8 @@ import java.util.List;
 public interface UserMapper {
 
     List<UserDO> queryAll();
-    UserDO queryAreaById(Integer userId);
+    UserDO queryUserById(Integer userId);
+    UserDO queryUserByName(String userName);
     int insertUser(UserDO userDO);
     int updateUser(UserDO userDO);
     int deleteUser(Integer userId);

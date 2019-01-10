@@ -20,8 +20,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDO queryAreaById(Integer userId) {
-        return userMapper.queryAreaById(userId);
+    public UserDO queryUserById(Integer userId) {
+        return userMapper.queryUserById(userId);
+    }
+
+    @Override
+    public UserDO queryUserByName(String userName){
+        return userMapper.queryUserByName(userName);
     }
 
     @Override

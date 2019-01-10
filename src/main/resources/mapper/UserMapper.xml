@@ -27,11 +27,18 @@
         FROM users
     </select>
 
-    <select id="queryAreaById" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
+    <select id="queryUserById" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
         SELECT
         <include refid="Base_Column_List" />
         FROM users
         WHERE ID = #{ID}
+    </select>
+
+    <select id="queryUserByName" parameterType="java.lang.String" resultMap="BaseResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM users
+        WHERE USERNAME = #{USERNAME}
     </select>
 
     <insert id="insertUser" parameterType="com.chxyz.demo.model.UserDO">

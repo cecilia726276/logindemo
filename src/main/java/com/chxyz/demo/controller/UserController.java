@@ -26,18 +26,24 @@ public class UserController {
         return users;
     }
 
-    @RequestMapping("/getUser")
-    public UserDO getUser(Integer id) {
-        UserDO user=userService.queryAreaById(id);
+    @RequestMapping("/getUserById")
+    public UserDO getUserById(Integer id) {
+        UserDO user=userService.queryUserById(id);
         return user;
     }
 
-    @RequestMapping("/add")
+    @RequestMapping("/getUserByName")
+    public UserDO getUserByName(String userName){
+        UserDO user = userService.queryUserByName(userName);
+        return user;
+    }
+
+    @RequestMapping("/addUser")
     public void save(UserDO user) {
         userService.insertUser(user);
     }
 
-    @RequestMapping(value="update")
+    @RequestMapping(value="/updateUser")
     public void update(UserDO user) {
         userService.updateUser(user);
     }

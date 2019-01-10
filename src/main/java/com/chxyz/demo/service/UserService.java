@@ -7,7 +7,8 @@ import java.util.List;
 public interface UserService {
 
     List<UserDO> queryAll();
-    UserDO queryAreaById(Integer userId);
+    UserDO queryUserById(Integer userId);
+    UserDO queryUserByName(String userName);
     boolean insertUser(UserDO userDO);
     boolean updateUser(UserDO userDO);
     boolean deleteUser(Integer userId);
