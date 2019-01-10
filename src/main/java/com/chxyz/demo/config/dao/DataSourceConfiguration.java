@@ -1,60 +1,36 @@
 package com.chxyz.demo.config.dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+import java.beans.PropertyVetoException;
+
+@Configuration
+//配置mybatis mapper的扫描路径
+@MapperScan("com.chxsyz.demo.dao")
 public class DataSourceConfiguration {
+    @Value("${jdbc.driver}")
+    private String jdbcDriver;
+    @Value("${jdbc.url}")
+    private String jdbcUrl;
+    @Value("${jdbc.username}")
+    private String jdbc;
+    @Value("${jdbc.password}")
+    private String jdbcPassword;
 
-    public static void main(String[] args) {
-        Connection connection = null;
-        Statement statement = null;
-        try {
-            //String url = "jdbc:mysql://192.168.101.44/amon";
-            String url = "jdbc:postgresql://192.168.100.120:5432/postgres";//PostgreSQL数据库实例所在的ip地址，并设置端口
-            //String user = "root";
-            String user = "postgres";
-            //String password = "560128";
-            String password = "";
-            //Class.forName("com.mysql.jdbc.Driver");
-            Class.forName("org.postgresql.Driver");
-            connection= DriverManager.getConnection(url, user, password);
-            System.out.println("是否成功连接pg数据库"+connection);
-            String sql = "select * from student";
-            statement = connection.createStatement();
 
-            /**
-             * 关于ResultSet的理解：Java程序中数据库查询结果的展现形式，或者说得到了一个结果集的表
-             * 在文档的开始部分有详细的讲解该接口中应该注意的问题，请阅读JDK
-             * */
-            ResultSet resultSet = statement.executeQuery(sql);
-            while(resultSet.next()){
-                //取出列值
-                int id = resultSet.getInt(1);
-                String name = resultSet.getString(2);
-                System.out.println(id+","+name+",");
-
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }finally{
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }finally{
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
-            }
-
-        }
+    @Bean(name = "dataSource")
+    public ComboPooledDataSource createDataSource() throws PropertyVetoException {
+        ComboPooledDataSource dataSource = new ComboPooledDataSource();
+        dataSource.setDriverClass(jdbcDriver);
+        dataSource.setJdbcUrl(jdbcUrl);
+        dataSource.setUser(jdbc);
+        dataSource.setPassword(jdbcPassword);
+        dataSource.setAutoCommitOnClose(false);
+        return dataSource;
     }
 
 }
