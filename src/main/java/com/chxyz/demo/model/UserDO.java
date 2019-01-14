@@ -1,12 +1,13 @@
 package com.chxyz.demo.model;
 
-import lombok.Setter;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Setter
 @Getter
+
 public class UserDO {
 
     private static final long serialVersionUID = -606293710771447475L;

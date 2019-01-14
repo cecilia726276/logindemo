@@ -4,6 +4,7 @@ import com.chxyz.demo.model.UserDO;
 
 import java.util.List;
 
+
 public interface UserMapper {
 
     List<UserDO> queryAll();

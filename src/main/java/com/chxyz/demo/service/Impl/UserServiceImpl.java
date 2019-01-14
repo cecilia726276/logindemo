@@ -1,18 +1,24 @@
 package com.chxyz.demo.service.Impl;
 
+import com.chxyz.demo.dao.CommonDao;
 import com.chxyz.demo.dao.UserMapper;
 import com.chxyz.demo.model.UserDO;
 import com.chxyz.demo.service.UserService;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+//import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends CommonDao implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    //@Autowired
+    //private SqlSessionTemplate sqlSessionTemplate;
 
     @Override
     public List<UserDO> queryAll() {
@@ -43,4 +49,8 @@ public class UserServiceImpl implements UserService {
     public boolean deleteUser(Integer userId) {
         return false;
     }
+
+    /*public void setSessionTemplate(SqlSessionTemplate sessionTemplate){
+
+    }*/
 }
