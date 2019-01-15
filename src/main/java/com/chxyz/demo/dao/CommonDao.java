@@ -5,6 +5,8 @@ import org.mybatis.spring.support.SqlSessionDaoSupport;
 
 import javax.annotation.Resource;
 
+
+// Unused model
 public class CommonDao extends SqlSessionDaoSupport {
     @Resource
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory){
