@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <classPathEntry
+            location="C:/Program Files/Java/jdk1.8.0_161/lib/sqljdbc4-2.0.jar"/>
+    <context id="my" targetRuntime="MyBatis3">
+        <commentGenerator>
+            <property name="suppressDate" value="false"/>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <jdbcConnection driverClass="org.postgresql.Driver"
+                        connectionURL="jdbc:postgresql://rm-uf6vxrx64o9a7zsh57o.pg.rds.aliyuncs.com:3432/web_demo"
+                        userId="cecilia726276"
+                        password="13_mouses"/>
+
+        <javaModelGenerator targetPackage="com.chxyz.demo.mybatis"
+                            targetProject="E:/Study/logindemo/src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="com.chxyz.demo.mybatis.entity.xml"
+                         targetProject="E:/Study/logindemo/src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <javaClientGenerator targetPackage="com.chxyz.demo.mybatis.mapper"
+                             targetProject="E:/Study/logindemo/src/main/java" type="XMLMAPPER">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!--<table tableName="T_FEE_AGTBILL" domainObjectName="FeeAgentBill"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"/>-->
+
+        <table tableName="USERS" domainObjectName="UserDemoDO"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <!--<columnRenamingRule searchString="^D_"
+                                replaceString=""/>-->
+        </table>
+
+        <!--a) 因为生成过程中需要连接db，所以第3行指定了驱动jar包的位置-->
+
+        <!--b) 15-17行为连接字符串-->
+
+        <!--c) 19-33行指定生成“entity实体类、mybatis映射xml文件、mapper接口”的具体位置-->
+
+        <!--d) 40-46行为具体要生成的表，如果有多个表，复制这一段，改下表名即可-->
+    </context>
+</generatorConfiguration>

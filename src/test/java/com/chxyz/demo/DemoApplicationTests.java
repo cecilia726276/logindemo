@@ -1,7 +1,10 @@
 package com.chxyz.demo;
 
+import com.chxyz.demo.dao.UserMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.jdbc.AutoConfigureDataJdbc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -13,5 +16,12 @@ public class DemoApplicationTests {
     public void contextLoads() {
     }
 
+    @Autowired
+    UserMapper userMapper;
+@Test
+    public void ttt(){
+    System.out.println(userMapper.queryUserById(1));
+
+    }
 }
 

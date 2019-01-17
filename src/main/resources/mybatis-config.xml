@@ -3,17 +3,17 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <settings>
-        <!-- 使用jdbc的getGeneratedKeys获取数据库自增主键值 -->
-        <setting name="useGeneratedKeys" value="true"/>
+    <!--<settings>-->
+        <!--&lt;!&ndash; 使用jdbc的getGeneratedKeys获取数据库自增主键值 &ndash;&gt;-->
+        <!--<setting name="useGeneratedKeys" value="true"/>-->
 
-        <!-- 使用列标签替换列别名 默认：true -->
-        <setting name="useColumnLabel" value="true" />
+        <!--&lt;!&ndash; 使用列标签替换列别名 默认：true &ndash;&gt;-->
+        <!--<setting name="useColumnLabel" value="true" />-->
 
-        <!-- 开启驼峰命名转换：Table{create_time} -> Entity {createTime} -->
-        <setting name="mapUnderscoreToCamelCase" value="true" />
+        <!--&lt;!&ndash; 开启驼峰命名转换：Table{create_time} -> Entity {createTime} &ndash;&gt;-->
+        <!--<setting name="mapUnderscoreToCamelCase" value="true" />-->
 
-    </settings>
+    <!--</settings>-->
 
     <typeAliases>
         <typeAlias alias="Integer" type="java.lang.Integer" />
