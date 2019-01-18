@@ -3,7 +3,6 @@ package com.chxyz.demo.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.chxyz.demo.model.UserDO;
-import com.chxyz.demo.service.Impl.UserServiceImpl;
 import com.chxyz.demo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 @Slf4j
 @RestController
@@ -61,7 +58,7 @@ public class UserController {
             map.put("typ", "JWT");
             map.put("exp", System.currentTimeMillis() + maxAge);
             ResponseData responseData = ResponseData.ok();
-            responseData.putDataValue("user",user01);
+            //responseData.putDataValue("user",user01);
 
             String token = JWT.create()
                     .withHeader(map)

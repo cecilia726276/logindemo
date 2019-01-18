@@ -4,70 +4,65 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.chxyz.demo.dao.UserMapper">
     <resultMap id="BaseResultMap" type="com.chxyz.demo.model.UserDO" >
-        <result column="ID" property="id" jdbcType="INTEGER" />
-        <result column="USERNAME" property="userName" jdbcType="VARCHAR" />
-        <result column="PASSWORD" property="password" jdbcType="VARCHAR" />
-        <result column="CREATED_AT" property="createTime" jdbcType="TIMESTAMP" />
-        <result column="SEX" property="sex" jdbcType="VARCHAR"/>
-        <result column="DOB" property="dob" jdbcType="DATE" />
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="username" property="userName" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+        <result column="created_at" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="sex" property="sex" jdbcType="VARCHAR" />
+        <result column="dob" property="dob" jdbcType="DATE" />
     </resultMap>
-
     <sql id="Base_Column_List" >
-        ID,
-        USERNAME,
-        PASSWORD,
-        CREATED_AT,
-        SEX,
-        DOB
+        id, username, password, created_at, sex, dob
     </sql>
-
-
     <select id="queryAll" resultMap="BaseResultMap"  >
         SELECT
         <include refid="Base_Column_List" />
         FROM users
     </select>
-
-    <select id="queryUserById" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
+    <select id="queryUserById" parameterType="java.lang.Long" resultMap="BaseResultMap" >
         SELECT
         <include refid="Base_Column_List" />
         FROM users
-        WHERE ID = #{ID}
+        WHERE ID = #{id,jdbcType=BIGINT}
     </select>
-
     <select id="queryUserByName" parameterType="java.lang.String" resultMap="BaseResultMap" >
         SELECT
         <include refid="Base_Column_List" />
         FROM users
         WHERE USERNAME = #{USERNAME}
     </select>
-
     <insert id="insertUser" parameterType="com.chxyz.demo.model.UserDO">
-       INSERT INTO
-       users
-       		(ID, USERNAME,PASSWORD,CREATED_AT, SEX, DOB)
-       	VALUES
-       		(#{ID}, #{USERNAME}, #{PASSWORD}, #{CREATED_AT, #{SEX}, #{DOB})
+        insert into users (id, username, password,
+        created_at, sex, dob)
+        values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+        #{createdAt,jdbcType=TIMESTAMP}, #{sex,jdbcType=VARCHAR}, #{dob,jdbcType=DATE})
+
     </insert>
-
     <update id="updateUser" parameterType="com.chxyz.demo.model.UserDO" >
-        UPDATE
-        users
-        SET
-        <if test="USERNAME != null">USERNAME = #{USERNAME},</if>
-        <if test="PASSWORD != null">PASSWORD = #{PASSWORD},</if>
-        <if test="SEX != null"> SEX = #{SEX},</if>
-        <if test="DOB != null"> DOB = #{DOB}</if>
-        WHERE
-        id = #{id}
+        update users
+        <set >
+            <if test="username != null" >
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null" >
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null" >
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="sex != null" >
+                sex = #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="dob != null" >
+                dob = #{dob,jdbcType=DATE},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
     </update>
-
-    <delete id="deleteUser" parameterType="java.lang.Integer" >
+    <delete id="deleteUser" parameterType="java.lang.Long" >
        DELETE FROM
        		 users
        WHERE
        		 id =#{id}
     </delete>
-
 </mapper>
-

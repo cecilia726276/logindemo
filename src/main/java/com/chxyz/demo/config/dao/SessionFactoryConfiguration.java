@@ -6,20 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 
+@Configuration
 public class SessionFactoryConfiguration {
 
+    @Value("${mybatis_config_file}")
     private String mybatisConfigFilePath;
 
     @Value("${mapper_path}")
     private String mapperPath;
 
-    @Value("${entity_package}")
+    @Value("${entity_pack}")
     private String entityPackage;
 
     @Autowired

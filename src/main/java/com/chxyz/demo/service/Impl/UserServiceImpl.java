@@ -1,14 +1,11 @@
 package com.chxyz.demo.service.Impl;
 
-import com.chxyz.demo.dao.CommonDao;
 import com.chxyz.demo.dao.UserMapper;
 import com.chxyz.demo.model.UserDO;
 import com.chxyz.demo.service.UserService;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 @Service
@@ -26,7 +23,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDO queryUserById(Integer userId) {
+    public UserDO queryUserById(Long userId) {
         return userMapper.queryUserById(userId);
     }
 
@@ -46,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(Integer userId) {
+    public boolean deleteUser(Long userId) {
         return false;
     }
 

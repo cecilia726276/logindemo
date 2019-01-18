@@ -10,7 +10,7 @@ import java.beans.PropertyVetoException;
 
 @Configuration
 //配置mybatis mapper的扫描路径
-@MapperScan(basePackages = "com.chxyz.demo.dao")
+@MapperScan("com.chxyz.demo.dao")
 public class DataSourceConfiguration {
     @Value("${jdbc.driver}")
     private String jdbcDriver;

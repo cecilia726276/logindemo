@@ -1,14 +1,5 @@
 package com.chxyz.demo.authentication;
 
-import com.auth0.jwt.JWT;
-import com.chxyz.demo.controller.ResponseData;
-import com.chxyz.demo.model.UserDO;
-import org.springframework.web.servlet.ModelAndView;
-import org.json.JSONObject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
-
 public class TokenInterceptor {
 //    public void afterCompletion(HttpServletRequest request,
 //                                HttpServletResponse response, Object handler, Exception arg3)
