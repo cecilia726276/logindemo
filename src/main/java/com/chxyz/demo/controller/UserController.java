@@ -48,8 +48,7 @@ public class UserController {
         // 返回用户信息后，Login Action从配置文件中获取Token签名生成的秘钥信息，进行Token的生成
         // 完成JWT数据签名后，将其设置到COOKIE对象中，并重定向到首页，完成登录过程
         UserDO user01 = userService.queryUserByName(username);
-        System.out.println(user01.toString());
-        if (user01.getUserName() == null){
+        if (user01 == null){
             return ResponseData.customerError().putDataValue("ERRORS",new String[]{"用户不存在"});
         }else if (user01.getUserName().equals(username) && user01.getPassword().equals(password)){
             long maxAge = 30L * 24L * 3600L * 1000L;
