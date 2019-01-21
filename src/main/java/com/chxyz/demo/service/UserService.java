@@ -7,9 +7,9 @@ import java.util.List;
 public interface UserService {
 
     List<UserDO> queryAll();
-    UserDO queryUserById(Long userId);
+    UserDO queryUserById(String userId);
     UserDO queryUserByName(String userName);
     boolean insertUser(UserDO userDO);
     boolean updateUser(UserDO userDO);
-    boolean deleteUser(Long userId);
+    boolean deleteUser(String userId);
 }

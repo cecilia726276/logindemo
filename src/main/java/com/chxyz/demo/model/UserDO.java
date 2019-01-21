@@ -15,7 +15,7 @@ public class UserDO {
     private String userName;
 
     // 用户id 不可为null 唯一
-    private Integer id;
+    private String id;
 
     // 密码 不可为null
     private String password;
@@ -33,11 +33,10 @@ public class UserDO {
         super();
     }
 
-    public UserDO(Integer id, String userName, String password, Date createTime ){
+    public UserDO(String id, String userName, String password ){
         super();
         this.id = id;
         this.userName = userName;
-        this.createTime = createTime;
         this.password = password;
     }
 

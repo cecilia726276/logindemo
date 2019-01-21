@@ -9,10 +9,10 @@ import java.util.List;
 public interface UserMapper  {
 
     List<UserDO> queryAll();
-    UserDO queryUserById(Long userId);
+    UserDO queryUserById(String userId);
     UserDO queryUserByName(String userName);
     int insertUser(UserDO userDO);
     int updateUser(UserDO userDO);
-    int deleteUser(Long userId);
+    int deleteUser(String userId);
 
 }
