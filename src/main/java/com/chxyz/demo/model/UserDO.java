@@ -2,12 +2,13 @@ package com.chxyz.demo.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Date;
 
 @Setter
 @Getter
-
+@ToString
 public class UserDO {
 
     private static final long serialVersionUID = -606293710771447475L;
@@ -23,11 +24,7 @@ public class UserDO {
     // 账户创建时间 不可为null
     private Date createTime;
 
-    // 出生日期 可为null
-    private Date dob;
-
-    // 性别 可为null
-    private Boolean sex;
+    private String latestToken;
 
     public UserDO(){
         super();

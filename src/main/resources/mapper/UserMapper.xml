@@ -8,11 +8,10 @@
         <result column="username" property="userName" jdbcType="VARCHAR" />
         <result column="password" property="password" jdbcType="VARCHAR" />
         <result column="created_at" property="createTime" jdbcType="TIMESTAMP" />
-        <result column="sex" property="sex" jdbcType="VARCHAR" />
-        <result column="dob" property="dob" jdbcType="DATE" />
+        <result column="latest_token" property="latestToken" jdbcType="VARCHAR" />
     </resultMap>
     <sql id="Base_Column_List" >
-        id, username, password, created_at, sex, dob
+        id, username, password, created_at, latest_token
     </sql>
     <select id="queryAll" resultMap="BaseResultMap"  >
         SELECT
@@ -33,9 +32,9 @@
     </select>
     <insert id="insertUser" parameterType="com.chxyz.demo.model.UserDO">
         insert into users (id, username, password,
-        created_at, sex, dob)
+        created_at,latest_token)
         values (#{id,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-        #{createTime,jdbcType=TIMESTAMP}, #{sex,jdbcType=VARCHAR}, #{dob,jdbcType=DATE})
+        #{createTime,jdbcType=TIMESTAMP}, #{latestToken,jdbcType=VARCHAR})
 
     </insert>
     <update id="updateUser" parameterType="com.chxyz.demo.model.UserDO" >
@@ -47,14 +46,11 @@
             <if test="password != null" >
                 password = #{password,jdbcType=VARCHAR},
             </if>
-            <if test="createdAt != null" >
+            <if test="createTime != null" >
                 created_at = #{createTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="sex != null" >
-                sex = #{sex,jdbcType=VARCHAR},
-            </if>
-            <if test="dob != null" >
-                dob = #{dob,jdbcType=DATE},
+            <if test="latestToken != null" >
+                latest_token = #{latestToken,jdbcType=VARCHAR},
             </if>
         </set>
         where id = #{id,jdbcType=VARCHAR}

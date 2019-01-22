@@ -6,8 +6,13 @@ import com.chxyz.demo.model.UserDO;
 import com.chxyz.demo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -38,18 +43,22 @@ public class UserController {
         return user;
     }*/
 
-    private String encryption(String username, String id, Long maxAge, String secret) throws UnsupportedEncodingException {
+
+
+
+
+    private String encryption(String id, Long maxAge, String secret) throws UnsupportedEncodingException {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("alg", "HS256"); // 声明加密的算法 通常直接使用 HMAC SHA256
         map.put("typ", "JWT");
         map.put("exp", System.currentTimeMillis() + maxAge);
         String token = JWT.create()
                 .withHeader(map)
-                .withClaim("name", username)
                 .withClaim("id", id)
                 .sign(Algorithm.HMAC256(secret));
         return token;
     }
+
     @RequestMapping(value = "login", method = RequestMethod.POST)
     @ResponseBody
     // 之后需定义并返回一个Result
@@ -65,8 +74,9 @@ public class UserController {
             ResponseData responseData = ResponseData.ok();
             long maxAge = 30L * 24L * 3600L * 1000L;
             String secret = "loginsecret";
-            String token = encryption(username, user.getId(), maxAge, secret );
+            String token = encryption(user.getId(), maxAge, secret );
             responseData.putDataValue("token", token);
+            log.warn("生成token",token);
             return responseData;
         }
 
@@ -102,7 +112,7 @@ public class UserController {
                 ResponseData responseData = ResponseData.ok();
                 long maxAge = 30L * 24L * 3600L * 1000L;
                 String secret = "registersecret";
-                String token = encryption(username, uuid, maxAge, secret);
+                String token = encryption(uuid, maxAge, secret);
                 responseData.putDataValue("token", token);
                 return responseData;
             }
