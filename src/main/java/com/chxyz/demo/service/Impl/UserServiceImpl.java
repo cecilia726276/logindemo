@@ -66,7 +66,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean updateUser(UserDO userDO) {
-        return false;
+        if (userDO.getId() != null && !"".equals(userDO.getId())){ ;
+            try{
+                String msg = userDO.toString();
+                log.warn("Try to update user,PARAMETER:{}", msg);
+                int effectedNum = userMapper.updateUser(userDO);
+                if (effectedNum > 0){
+                    return true;
+                } else {
+                    log.error("Failed to update user,PARAMETER:{}", msg);
+                    throw new RuntimeException("更改用户信息失败");
+                }
+            }catch (Exception e){
+                log.error("Failed to update user,PARAMETER:{}", e.getMessage());
+                throw new RuntimeException("更改用户信息失败：" + e.getMessage());
+            }
+        }else{
+            log.error("Failed to update user,PARAMETER:{}","用户信息为空" );
+            throw new RuntimeException("用户信息不能为空！");
+        }
     }
 
     @Override

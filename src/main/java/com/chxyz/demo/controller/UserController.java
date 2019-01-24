@@ -2,6 +2,9 @@ package com.chxyz.demo.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.chxyz.demo.model.UserDO;
 import com.chxyz.demo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +17,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @Slf4j
@@ -24,45 +29,72 @@ public class UserController {
     private UserService userService;
 
     static final long maxAge = 30L * 24L * 3600L * 1000L;
-    /*
-    @RequestMapping("/getUsers")
-    public List<UserDO> getUsers() {
-        List<UserDO> users=userService.queryAll();
-        return users;
+
+//    //DecodedJWT jwt = JWT.decode(token);
+//    String algorithm = jwt.getAlgorithm();
+//    String type = jwt.getType();
+//    String contentType = jwt.getContentType();
+//    String keyId = jwt.getKeyId();
+//    Claim claim = jwt.getHeaderClaim("owner");
+//    Map<String, Claim> claims = jwt.getClaims();    //Key is the Claim name
+//    Claim claim = claims.get("isAdmin");
+//    or
+//    Claim claim = jwt.getClaim("isAdmin");
+
+    @RequestMapping(value = "authentication", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseData validateToken(@RequestParam String token) {
+        log.warn("Receive token, PARAMETER:{}",token);
+        DecodedJWT jwt = JWT.decode(token);
+        log.warn("Decoding");
+        //Map<String, Claim> claims = jwt.getClaims();
+        Date expiresAt = jwt.getExpiresAt();
+        log.warn("Get Expire Date, PARAMETER:{}", expiresAt);
+        Date current = new Date();
+        log.warn("Get current date, PARAMETER:{}", current);
+        boolean expired = current.after(expiresAt);
+        log.warn("Check expired.");
+        if (expired){
+            log.warn("Token expired.");
+           return ResponseData.customerError().putDataValue("ERRORS", new String[]{"Token expired!"});
+        }
+        log.warn("Pass validation.");
+        return ResponseData.ok();
+
     }
-
-    @RequestMapping("/getUserById")
-    public UserDO getUserById(Integer id) {
-        UserDO user=userService.queryUserById(id);
-        return user;
-    }
-
-    @RequestMapping("/getUserByName")
-    public UserDO getUserByName(String userName){
-        UserDO user = userService.queryUserByName(userName);
-        return user;
-    }*/
-
-
-
-
 
     private String encryption(String id, Long maxAge, String secret) throws UnsupportedEncodingException {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("alg", "HS256"); // 声明加密的算法 通常直接使用 HMAC SHA256
         map.put("typ", "JWT");
-        map.put("exp", System.currentTimeMillis() + maxAge);
+       //map.put("exp", System.currentTimeMillis() + maxAge);
         String token = JWT.create()
                 .withHeader(map)
+                .withExpiresAt(new Date(new Date().getTime() + maxAge))
                 .withClaim("id", id)
                 .sign(Algorithm.HMAC256(secret));
         return token;
     }
 
+    private String mdEncryption(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] pwdByteArray = password.getBytes("utf-8");
+        byte[] mdByteArray=md.digest(pwdByteArray);
+        StringBuffer hexValue=new StringBuffer();
+        for(int i=0;i<mdByteArray.length;i++){
+            int val=((int)mdByteArray[i])&0xff;
+            if(val<16){
+                hexValue.append("0");
+            }
+            hexValue.append(Integer.toHexString(val));
+        }
+        return hexValue.toString();
+    }
+
     @RequestMapping(value = "login", method = RequestMethod.POST)
     @ResponseBody
     // 之后需定义并返回一个Result
-    public ResponseData login(@RequestParam String username, @RequestParam String password) throws UnsupportedEncodingException {
+    public ResponseData login(@RequestParam String username, @RequestParam String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         System.out.println(username + "; " + password);
         // 调用认证服务进行用户名密码认证，如果认证通过，Login Action层调用用户信息服务获取用户信息
         // 返回用户信息后，Login Action从配置文件中获取Token签名生成的秘钥信息，进行Token的生成
@@ -70,49 +102,40 @@ public class UserController {
         UserDO user = userService.queryUserByName(username);
         if (user == null){
             return ResponseData.customerError().putDataValue("ERRORS",new String[]{"用户不存在"});
-        }else if (user.getUserName().equals(username) && user.getPassword().equals(password)){
+        }else if (user.getUserName().equals(username) && (mdEncryption(password)).equals(user.getPassword())){
             ResponseData responseData = ResponseData.ok();
-            long maxAge = 30L * 24L * 3600L * 1000L;
-            String secret = "loginsecret";
+            long maxAge = 24L * 3600L * 1000L;
+            String secret = "secret";
             String token = encryption(user.getId(), maxAge, secret );
-            responseData.putDataValue("token", token);
+            user.setLatestToken(token);
             log.warn("生成token",token);
-            return responseData;
+            Boolean outcome = userService.updateUser(user);
+            if (outcome){
+                responseData.putDataValue("token", token);
+                return responseData;
+            }
+            return ResponseData.serverInternalError().putDataValue("ERRORS",new String[]{"服务器内部错误"});
         }
-
-
-
-//        if ("cecilia726276".equals(username) && "123456".equals(password)) {
-//            ResponseData responseData = ResponseData.ok();
-//            UserDO user = new UserDO();
-//            //user.setId(1);
-//            user.setUserName(username);
-//            user.setPassword(password);
-//            responseData.putDataValue("user", user);
-//            /*String token = JWT.sign(user, 30L * 24L * 3600L * 1000L);
-//            if (token != null) {
-//                responseData.putDataValue("token", token);
-//            }*/
-//            return responseData;
-//        }
         return ResponseData.customerError().putDataValue("ERRORS", new String[]{"用户名或者密码错误"});
     }
 
     @RequestMapping(value = "register", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseData register(@RequestParam String username, @RequestParam String password) throws UnsupportedEncodingException {
+    public ResponseData register(@RequestParam String username, @RequestParam String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         System.out.println(username + "; " + password);
         UserDO user = userService.queryUserByName(username);
         if (user == null){
             String uuid = UUID.randomUUID().toString();	//获取UUID并转化为String对象
             uuid = uuid.replace("-", "");
+            password= mdEncryption(password);
             UserDO newUser = new UserDO(uuid,username,password);
+            long maxAge = 30L * 24L * 3600L * 1000L;
+            String secret = "secret";
+            String token = encryption(uuid, maxAge, secret);
+            newUser.setLatestToken(token);
             Boolean outcome = userService.insertUser(newUser);
             if (outcome){
                 ResponseData responseData = ResponseData.ok();
-                long maxAge = 30L * 24L * 3600L * 1000L;
-                String secret = "registersecret";
-                String token = encryption(uuid, maxAge, secret);
                 responseData.putDataValue("token", token);
                 return responseData;
             }
@@ -121,40 +144,13 @@ public class UserController {
 
     }
 
+
     @RequestMapping(value = "sendMessage", method = RequestMethod.POST)
     @ResponseBody
     public ResponseData sendMessage(@RequestParam String username, @RequestParam String password) throws UnsupportedEncodingException {
 
         return ResponseData.ok();
     }
-    /*public void login(@RequestBody Map<String, String> params) {
-        log.warn("call AccountOpenServiceImpl accountOpen SUCCESS,RESPONSE:{} ", params);
-        //1.验证用户名与密码...
-        //2.通过后从数据库中读取该合法user...
-        //3.生成token*/
-        /*Identity identity = new Identity();
-        identity.setId(user.getId());
-        identity.setIssuer(issuer);
-        identity.setDuration(duration);
-        identity.setPhone(user.getUserName());
-        identity.setRole(user.getRole());
-        String token = Identity.createToken(identity, apiKeySecret);*/
-        //4.返回并下发token
-    //}
 
-   /* @RequestMapping("/addUser")
-    public void save(UserDO user) {
-        userService.insertUser(user);
-    }
-
-    @RequestMapping(value="/updateUser")
-    public void update(UserDO user) {
-        userService.updateUser(user);
-    }
-
-    @RequestMapping(value="/delete/{id}")
-    public void delete(@PathVariable("id") Integer id) {
-        userService.deleteUser(id);
-    }*/
 
 }

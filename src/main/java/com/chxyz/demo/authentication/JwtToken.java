@@ -23,11 +23,13 @@ public class JwtToken {
     }
 
     // 验证代码
-    public static void verifyToken(String token,String key) throws Exception{
+    public static Map<String, Claim> verifyToken(String token,String key) throws Exception{
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(key))
                 .build();
+
         DecodedJWT jwt = verifier.verify(token);
         Map<String, Claim> claims = jwt.getClaims();
-        System.out.println(claims.get("name").asString());
+        return jwt.getClaims();
+
     }
 }

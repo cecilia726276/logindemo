@@ -40,8 +40,8 @@
     <update id="updateUser" parameterType="com.chxyz.demo.model.UserDO" >
         update users
         <set >
-            <if test="username != null" >
-                username = #{username,jdbcType=VARCHAR},
+            <if test="userName != null" >
+                username = #{userName,jdbcType=VARCHAR},
             </if>
             <if test="password != null" >
                 password = #{password,jdbcType=VARCHAR},
