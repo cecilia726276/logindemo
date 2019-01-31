@@ -38,10 +38,10 @@
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false"/>-->
 
-        <table tableName="USERS" domainObjectName="UserDemoDO"
+        <table tableName="chat" domainObjectName="MessageDO"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
-               selectByExampleQueryId="false">
+               selectByExampleQueryId="true">
             <!--<columnRenamingRule searchString="^D_"
                                 replaceString=""/>-->
         </table>
