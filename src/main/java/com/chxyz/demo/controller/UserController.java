@@ -2,20 +2,16 @@ package com.chxyz.demo.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.chxyz.demo.model.MessageDO;
 import com.chxyz.demo.model.UserDO;
+import com.chxyz.demo.service.MessageService;
 import com.chxyz.demo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -29,6 +25,9 @@ public class UserController {
     private UserService userService;
 
     static final long maxAge = 30L * 24L * 3600L * 1000L;
+
+    @Autowired
+    private MessageService messageService;
 
 //    //DecodedJWT jwt = JWT.decode(token);
 //    String algorithm = jwt.getAlgorithm();
@@ -44,24 +43,29 @@ public class UserController {
     @RequestMapping(value = "authentication", method = RequestMethod.POST)
     @ResponseBody
     public ResponseData validateToken(@RequestParam String token) {
+        boolean outcome = validate(token);
+        if (!outcome){
+           return ResponseData.customerError().putDataValue("ERRORS", new String[]{"Token expired!"});
+        }
+        return ResponseData.ok();
+    }
+
+    private boolean validate(String token){
         log.warn("Receive token, PARAMETER:{}",token);
         DecodedJWT jwt = JWT.decode(token);
         log.warn("Decoding");
-        //Map<String, Claim> claims = jwt.getClaims();
+
         Date expiresAt = jwt.getExpiresAt();
-        log.warn("Get Expire Date, PARAMETER:{}", expiresAt);
         Date current = new Date();
-        log.warn("Get current date, PARAMETER:{}", current);
         boolean expired = current.after(expiresAt);
-        log.warn("Check expired.");
         if (expired){
             log.warn("Token expired.");
-           return ResponseData.customerError().putDataValue("ERRORS", new String[]{"Token expired!"});
+            return false;
         }
         log.warn("Pass validation.");
-        return ResponseData.ok();
-
+        return true;
     }
+
 
     private String encryption(String id, Long maxAge, String secret) throws UnsupportedEncodingException {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -104,7 +108,7 @@ public class UserController {
             return ResponseData.customerError().putDataValue("ERRORS",new String[]{"用户不存在"});
         }else if (user.getUserName().equals(username) && (mdEncryption(password)).equals(user.getPassword())){
             ResponseData responseData = ResponseData.ok();
-            long maxAge = 24L * 3600L * 1000L;
+            long maxAge = 24L * 3600L * 1000L; // 1 day
             String secret = "secret";
             String token = encryption(user.getId(), maxAge, secret );
             user.setLatestToken(token);
@@ -144,11 +148,37 @@ public class UserController {
 
     }
 
+    @RequestMapping(value = "requestMessage", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseData requestMessage(@RequestParam String token){
+        boolean valid = validate(token);
+        if (!valid){
+            return ResponseData.customerError().putDataValue("ERRORS",new String[]{"用户登陆已超时"});
+        }
+        try {
+            List<MessageDO> messageDOList = messageService.queryAllMessage();
+            return ResponseData.ok().putDataValue("list",messageDOList);
+        } catch (Exception e){
+            return ResponseData.serverInternalError().putDataValue("ERRORS",new String[]{"服务器发送未知错误！"});
+        }
+    }
+
 
     @RequestMapping(value = "sendMessage", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseData sendMessage(@RequestParam String username, @RequestParam String password) throws UnsupportedEncodingException {
-
+    public ResponseData sendMessage(@RequestParam String token, @RequestParam String content) throws UnsupportedEncodingException {
+        boolean valid = validate(token);
+        DecodedJWT jwt = JWT.decode(token);
+        Claim claim = jwt.getClaim("id");
+        String id = claim.asString();
+        System.out.println(claim.asString());
+        MessageDO messageDO = new MessageDO();
+        messageDO.setContent(content);
+        messageDO.setUid(id);
+        boolean outcome = messageService.insertMessage(messageDO);
+        if (outcome){
+            ResponseData responseData = ResponseData.ok();
+        }
         return ResponseData.ok();
     }
 
